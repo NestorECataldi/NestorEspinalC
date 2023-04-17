@@ -1,0 +1,150 @@
+-- Proyecto final Nestor Espinal Cataldi , bootcamp bigdata
+
+create schema proyectofinal_NestorEspinal authorization xsyxfoka;
+
+create table proyectofinal_nestorespinal.coches_de_la_empresa(
+idcoche varchar(250) not null,
+constraint coches_de_la_empresa_PK primary key(idcoche),
+modelo_coche varchar (50) not null, -- convertir a FK
+color_del_coche varchar (50) not null, -- convertir a FK
+kilometraje integer not null,
+insurance_company varchar (100) not null, -- convertir a FK
+Fecha_de_compra date not null,
+Num_poliza varchar(50) not null,
+Matricula varchar(10) not null
+);
+
+-- Se crea la tabla Modelos_Coche, donde se creará la columna ID_marcas, que es una FK a la tabla Marcas
+
+create table proyectofinal_nestorespinal.modelos_coche(
+    modelo_coche VARCHAR(50) not null,
+    constraint modelos_coche_PK primary key(modelo_coche),
+    ID_marcas varchar(250) not null --hacer foreign key hacia la tabla ID_Marcas en su PK ID_marcas
+);
+
+create table proyectofinal_nestorespinal.id_Marcas (
+id_marcas VARCHAR(50) not null,
+    constraint id_marcas_PK primary key(id_marcas),
+    NombreMarcas varchar(250) not null
+);
+
+-- Se creó la tabla ID_Grupo, que se relaciona con la tabla ID_Marcas a través de su PK ID_Grupo
+create table proyectofinal_nestorespinal.id_grupo (
+    ID_Marcas VARCHAR(50) not null, 
+    constraint id_grupo_PK primary key(ID_Marcas),
+    Nombre_grupo varchar(50) not null
+);
+
+-- Se crea una FK de la columna ID_Marcas, de la tabla id_marcas para la tabla id_grupo, columna idgrupo
+alter table proyectofinal_nestorespinal.id_marcas  
+add constraint id_marcas_fk
+foreign key (id_marcas) references id_grupo(id_marcas); --por esto a veces da error; hay que asegurarse estar en el schema que es
+
+-- Foreign key de la tabla coches de la empresa, en su columna Modelo Coche a la misma columna de la tabla Modelos_Coche
+alter table proyectofinal_nestorespinal.coches_de_la_empresa
+add constraint ID_coches_de_la_empresa_fk
+foreign key (Modelo_coche) references Modelos_Coche(Modelo_coche);
+
+-- Foreign key de la tabla coches de la empresa, en su columna ID_marcas a la misma columna de la tabla ID_Marcas
+alter table proyectofinal_nestorespinal.Modelos_Coche
+add constraint ID_marcas_fk
+foreign key (ID_marcas) references ID_Marcas(ID_marcas);
+
+--Se crea la tabla color del coche
+create table proyectofinal_NestorEspinal.Color_del_Coche (
+    Color_del_Coche VARCHAR(50) not null,
+    constraint Color_del_Coche_PK primary key(Color_del_Coche)
+);
+
+-- Foreign key de la tabla coches de la empresa, en su Color_del_coche a la misma columna de la tabla Color_del_Coche
+alter table proyectofinal_nestorespinal.coches_de_la_empresa 
+add constraint Color_Coche_fk
+foreign key (Color_del_coche) references Color_del_Coche(Color_del_Coche);
+
+-- Se crea la tabla compania_aseguradora, donde se creará la columna insurance_company, que es una contraparte FK a la columna insurance_company
+create table proyectofinal_NestorEspinal.compania_aseguradora (
+    insurance_company VARCHAR(50) not null,
+    constraint insurance_company_PK primary key(insurance_company),
+    IDCompanias varchar(250) not null
+);
+
+-- Foreign key de la columna insurance_company, de la tabla creada previamente
+alter table proyectofinal_nestorespinal.coches_de_la_empresa 
+add constraint insurance_company_fk
+foreign key (insurance_company) references compania_aseguradora(insurance_company);
+
+-- Se crea la tabla revisiones, contraparte de la FK y PK, IDCoche, de la tabla Coches_de_la_empresa
+create table proyectofinal_NestorEspinal.Revisiones (
+    IDCoche VARCHAR(50) not null, --crear esta FK en la tabla coches_de_la_empresa
+    constraint IDCoche_PK primary key(IDCoche),
+    Fecha_revision date not null,
+    importe_revision numeric (20) not null,
+    km_revision numeric (30) not null,
+    currency varchar (30) not null --crear FK a tabla Currency
+);
+
+-- Se crea la tabla revisiones, contraparte de la FK y PK, IDCoche, de la tabla Coches_de_la_empresa
+create table proyectofinal_NestorEspinal.Currency (
+    Currency varchar(50) not null, 
+    constraint Currency_PK primary key(Currency),
+    name varchar(20) not null
+);
+
+-- Crear la FK de la tabla coches_de_la_empresa en su columna IDCoche para la tabla Revisiones, column IDCoche
+alter table proyectofinal_nestorespinal.coches_de_la_empresa 
+add constraint IDCoche_fk
+foreign key (IDCoche) references Revisiones(IDCoche);
+
+
+-- Crear la FK tabla revisiones, columna Currency, para la tabla Currency en su columna Currency.
+alter table proyectofinal_nestorespinal.Revisiones
+add constraint Currency_fk
+foreign key (Currency) references Currency(Currency);
+
+-- INSERTAR GRUPO DE CARROS
+
+insert into proyectofinal_nestorespinal.id_grupo (id_marcas, nombre_grupo) values(1,'Ferrari, Fiat, Maserati, Alfa Romeo');
+insert into proyectofinal_nestorespinal.id_grupo (id_marcas, nombre_grupo) values(2,'Ferrari, Fiat, Maserati, Alfa Romeo'); --1
+
+
+-- INSERTAR MARCAS DE AUTOS
+
+insert into proyectofinal_nestorespinal.id_marcas (id_marcas, nombremarcas) values (1,'Ferrari');
+insert into proyectofinal_nestorespinal.id_marcas (id_marcas, nombremarcas) values (2,'Alfa Romeo'); --2
+
+-- INSERTAR VALORES MODELOS
+
+insert into proyectofinal_nestorespinal.modelos_coche (id_marcas, modelo_coche) values (1, 'Berlinetta');
+insert into proyectofinal_nestorespinal.modelos_coche (id_marcas, modelo_coche) values (2, 'Prototipo X');
+
+
+-- COLORES DE AUTOS AGREGANDO VALORES
+insert into proyectofinal_nestorespinal.color_del_coche  (color_del_coche) values ('Rojo');
+insert into proyectofinal_nestorespinal.color_del_coche (color_del_coche) values ('Azul');
+
+-- Empresa de seguros
+insert into proyectofinal_nestorespinal.compania_aseguradora (insurance_company, idcompanias) values ('Maphre seguros', 1);
+insert into proyectofinal_nestorespinal.compania_aseguradora (insurance_company, idcompanias) values ('Seguros Universal RD', 2);
+
+-- Currency o Moneda
+
+insert into proyectofinal_nestorespinal.currency (currency, name) values ('DOL', 'Dolar');
+insert into proyectofinal_nestorespinal.currency (currency, name) values ('EUR', 'Euro');
+
+
+-- Revisiones tabla insertar datos
+insert into proyectofinal_nestorespinal.revisiones (idcoche, fecha_revision, importe_revision, km_revision, currency)  values (1, '2023-01-01', 300, 129000, 'EUR');
+insert into proyectofinal_nestorespinal.revisiones (idcoche, fecha_revision, importe_revision, km_revision, currency)  values (2, '2023-02-06', 160, 6000, 'DOL');
+
+-- Coches de la empresa tabla
+insert into proyectofinal_nestorespinal.coches_de_la_empresa (idcoche, modelo_coche, color_del_coche, kilometraje, insurance_company, fecha_de_compra, num_poliza, matricula) values (1, 'Berlinetta','Rojo', 129000, 'Maphre seguros','2016-05-07','1234567', 'OP8090');
+insert into proyectofinal_nestorespinal.coches_de_la_empresa (idcoche, modelo_coche, color_del_coche, kilometraje, insurance_company, fecha_de_compra, num_poliza, matricula) values (2, 'Prototipo X','Azul', 6000, 'Seguros Universal RD','2015-05-06','89101112','AP789');
+
+---- QUERY
+SELECT Modelos_Coche.Modelo_coche, ID_Marcas.NombreMarcas, id_grupo.Nombre_grupo, coches_de_la_empresa.Fecha_de_compra, coches_de_la_empresa.Matricula, Color_del_Coche.Color_del_Coche, coches_de_la_empresa.kilometraje, compania_aseguradora.IDCompanias 
+FROM proyectofinal_NestorEspinal.coches_de_la_empresa 
+JOIN proyectofinal_NestorEspinal.Modelos_Coche ON coches_de_la_empresa.Modelo_coche = Modelos_Coche.Modelo_coche 
+JOIN proyectofinal_NestorEspinal.ID_Marcas ON Modelos_Coche.ID_marcas = ID_Marcas.ID_marcas 
+JOIN proyectofinal_NestorEspinal.id_grupo ON ID_Marcas.ID_marcas = id_grupo.ID_Marcas 
+JOIN proyectofinal_NestorEspinal.Color_del_Coche ON coches_de_la_empresa.Color_del_coche = Color_del_Coche.Color_del_Coche 
+JOIN proyectofinal_NestorEspinal.compania_aseguradora ON coches_de_la_empresa.insurance_company = compania_aseguradora.insurance_company;
